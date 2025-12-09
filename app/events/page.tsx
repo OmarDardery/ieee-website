@@ -1,11 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { EventCard } from "../components/EventCard";
 import { useEvents, type EventItem } from "../context/EventsContext";
-
-export const dynamic = "force-dynamic";
 
 type DateFilter = {
   from?: string;
@@ -19,7 +17,7 @@ const societies = [
   "ComSoc",
 ];
 
-export default function EventsPage() {
+function EventsContent() {
   const events = useEvents();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -135,5 +133,13 @@ export default function EventsPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 px-6 py-10">Loading events...</div>}>
+      <EventsContent />
+    </Suspense>
   );
 }
