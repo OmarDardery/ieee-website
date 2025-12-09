@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { EventCard } from "../components/EventCard";
 import { useEvents, type EventItem } from "../context/EventsContext";
 
+export const dynamic = "force-dynamic";
+
 type DateFilter = {
   from?: string;
   to?: string;
