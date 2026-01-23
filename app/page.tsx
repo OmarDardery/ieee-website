@@ -1,16 +1,98 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
+
+type Member = {
+  name: string;
+  role: string;
+  image: string;
+};
+
+type PersonSliderProps = {
+  members: Member[];
+  title: string;
+  currentSlide: number;
+  setSlide: Dispatch<SetStateAction<number>>;
+  progressKey: number;
+};
+
+const PersonSlider = ({ members, title, currentSlide, setSlide, progressKey }: PersonSliderProps) => {
+  const handleNext = () => {
+    setSlide((prev) => (prev + 1) % members.length);
+  };
+
+  const handlePrev = () => {
+    setSlide((prev) => (prev - 1 + members.length) % members.length);
+  };
+
+  return (
+    <div className="w-full">
+      <h3 className="mb-2 text-center text-xl font-bold text-white sm:text-2xl">{title}</h3>
+      <div className="mb-4 h-1 w-full overflow-hidden rounded-full bg-white/10">
+        <div
+          key={`${title}-${currentSlide}-${progressKey}`}
+          className="h-full bg-amber-400"
+          style={{ animation: "sliderProgress 5s linear forwards" }}
+        />
+      </div>
+      <div className="relative flex flex-col items-center gap-4 sm:gap-6">
+        <div className="relative h-64 w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 shadow-lg shadow-black/30 sm:h-80 sm:w-64">
+          <Image
+            src={`/information/people/${title === "Executive Committee" ? "excom" : title === "Committee Heads" ? "committee-head" : "ieee-eui-founders"}/${members[currentSlide].image}`}
+            alt={members[currentSlide].name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 192px, 256px"
+          />
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-bold text-white sm:text-xl">{members[currentSlide].name}</p>
+          <p className="text-xs font-semibold text-blue-100 sm:text-sm">{members[currentSlide].role}</p>
+        </div>
+        <div className="flex gap-2 sm:gap-3">
+          <button
+            onClick={handlePrev}
+            className="rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20 active:scale-95"
+          >
+            ←
+          </button>
+          <div className="flex gap-1">
+            {members.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setSlide(i);
+                }}
+                className={`h-2 rounded-full transition ${
+                  i === currentSlide ? "w-6 bg-amber-400" : "w-2 bg-white/30"
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={handleNext}
+            className="rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20 active:scale-95"
+          >
+            →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
   const [excomSlide, setExcomSlide] = useState(0);
   const [committeeSlide, setCommitteeSlide] = useState(0);
   const [foundersSlide, setFoundersSlide] = useState(0);
   const [awardsSlide, setAwardsSlide] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [excomProgressKey, setExcomProgressKey] = useState(0);
+  const [committeeProgressKey, setCommitteeProgressKey] = useState(0);
+  const [foundersProgressKey, setFoundersProgressKey] = useState(0);
+  const [awardsProgressKey, setAwardsProgressKey] = useState(0);
 
-  const excomMembers = [
+  const excomMembers: Member[] = [
     { name: "Fouad Hashesh", role: "Chair", image: "chair-fouad-hashesh.png" },
     { name: "Laila Khaled", role: "Vice-Chair", image: "vice-chair-laila-khaled.png" },
     { name: "Farah Sultan", role: "Secretary", image: "secretary-farah-sultan.png" },
@@ -18,345 +100,309 @@ export default function Home() {
     { name: "Omar Dardery", role: "Web Master", image: "web-master-omar-dardery.png" },
   ];
 
-  const committeeHeads = [
+  const committeeHeads: Member[] = [
     { name: "Mariam Hassan", role: "HR Head", image: "hr-head-mariam-hassan.png" },
     { name: "Nour Nasr", role: "Media Head", image: "media-head-nour-nasr.png" },
     { name: "Nour Hazem", role: "PR Head", image: "pr-head-nour-hazem.png" },
     { name: "Abdelrahman Elkhashab", role: "Organization Committee Head", image: "organization-committee-head-adbelrahman-elkhashab.png" },
   ];
 
-  const founders = [
+  const founders: Member[] = [
     { name: "Zeyad Ayman", role: "Founding Chair", image: "founding-chair-zeyad-ayman.png" },
     { name: "Youssef Haider", role: "Founding Vice-Chair", image: "founding-vice-chair-youssef-haider.png" },
     { name: "Doha Hafez", role: "Founding Secretary", image: "Founding-secrtary-IEEE-Central-Indiana-Section-Student-Representative-Doha-Hafez.png" },
   ];
 
-  const awards = [
+  const awards: string[] = [
     "/information/sb-awards/awards-1.png",
     "/information/sb-awards/award-2.png",
     "/information/sb-awards/awards-3.png",
     "/information/sb-awards/awards-4.png",
   ];
 
-  // Auto-advance sliders every 5 seconds
+  // Auto-advance sliders every 5 seconds with progress bar reset via key
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const newProgress = prev + 20;
-        if (newProgress >= 100) {
-          setExcomSlide((current) => (current + 1) % excomMembers.length);
-          return 0;
-        }
-        return newProgress;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    setExcomProgressKey((key) => key + 1);
+    const timer = setTimeout(() => {
+      setExcomSlide((current) => (current + 1) % excomMembers.length);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [excomSlide, excomMembers.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setCommitteeProgressKey((key) => key + 1);
+    const timer = setTimeout(() => {
       setCommitteeSlide((current) => (current + 1) % committeeHeads.length);
     }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearTimeout(timer);
+  }, [committeeSlide, committeeHeads.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setFoundersProgressKey((key) => key + 1);
+    const timer = setTimeout(() => {
       setFoundersSlide((current) => (current + 1) % founders.length);
     }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearTimeout(timer);
+  }, [foundersSlide, founders.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setAwardsProgressKey((key) => key + 1);
+    const timer = setTimeout(() => {
       setAwardsSlide((current) => (current + 1) % awards.length);
     }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const PersonSlider = ({ members, title, currentSlide, setSlide, isExcom }) => {
-    const handleNext = () => {
-      setSlide((currentSlide + 1) % members.length);
-      setProgress(0);
-    };
-    const handlePrev = () => {
-      setSlide((currentSlide - 1 + members.length) % members.length);
-      setProgress(0);
-    };
-
-    return (
-      <div className="w-full">
-        <h3 className="mb-2 text-center text-xl font-bold text-gray-900 sm:text-2xl">{title}</h3>
-        {isExcom && (
-          <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-gray-200">
-            <div
-              className="h-full bg-blue-600 transition-all duration-1000 ease-linear"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        )}
-        <div className="relative flex flex-col items-center gap-4 sm:gap-6">
-          <div className="relative h-64 w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 shadow-lg sm:h-80 sm:w-64">
-            <Image
-              src={`/information/people/${title === "Executive Committee" ? "excom" : title === "Committee Heads" ? "committee-head" : "ieee-eui-founders"}/${members[currentSlide].image}`}
-              alt={members[currentSlide].name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 192px, 256px"
-            />
-          </div>
-          <div className="text-center">
-            <p className="text-lg font-bold text-gray-900 sm:text-xl">{members[currentSlide].name}</p>
-            <p className="text-xs font-semibold text-blue-600 sm:text-sm">{members[currentSlide].role}</p>
-          </div>
-          <div className="flex gap-2 sm:gap-3">
-            <button
-              onClick={handlePrev}
-              className="rounded-full bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200 active:scale-95"
-            >
-              ←
-            </button>
-            <div className="flex gap-1">
-              {members.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setSlide(i);
-                    setProgress(0);
-                  }}
-                  className={`h-2 rounded-full transition ${
-                    i === currentSlide ? "w-6 bg-blue-600" : "w-2 bg-blue-200"
-                  }`}
-                />
-              ))}
-            </div>
-            <button
-              onClick={handleNext}
-              className="rounded-full bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200 active:scale-95"
-            >
-              →
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+    return () => clearTimeout(timer);
+  }, [awardsSlide, awards.length]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white px-3 py-6 text-gray-900 sm:px-6 sm:py-10 lg:px-8 lg:py-12" suppressHydrationWarning>
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 sm:gap-10 lg:gap-12">
-        {/* Hero Section */}
-        <section className="rounded-2xl border border-blue-100 bg-white/80 p-4 shadow-lg shadow-blue-100/40 backdrop-blur sm:rounded-3xl sm:p-6 lg:p-8">
-          <div className="grid gap-6 md:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <div className="space-y-4 sm:space-y-6">
-              <p className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 sm:text-sm">
-                Welcome to IEEE EUI Branch
-              </p>
-              <h1 className="text-2xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-5xl">
-                Empowering engineers to learn, build, and lead.
+    <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-3 py-6 text-gray-50 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10 sm:gap-12 lg:gap-16">
+        <style jsx>{`
+          @keyframes sliderProgress {
+            from { width: 0%; }
+            to { width: 100%; }
+          }
+        `}</style>
+
+        {/* Hero + Impact strip */}
+        <section className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-600/30 via-slate-900 to-purple-700/20 p-6 shadow-2xl shadow-blue-900/30 backdrop-blur sm:p-8 lg:p-10">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="space-y-5 sm:space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-blue-100 ring-1 ring-white/20 sm:text-sm">
+                IEEE EUI • Builders, hackers, mentors
+              </div>
+              <h1 className="text-3xl font-black leading-tight text-white sm:text-4xl lg:text-5xl">
+                Make the future real. Together.
               </h1>
-              <p className="text-sm text-gray-700 sm:text-base lg:text-lg">
-                We are a student community of builders, researchers, and volunteers. Join us for
-                hands-on workshops, technical talks, hackathons, and outreach programs that turn ideas
-                into real impact.
+              <p className="text-sm text-slate-200 sm:text-base lg:text-lg">
+                We run hands-on tech tracks, ship projects, host design sprints, and collaborate with industry to push
+                what engineers on campus can build.
               </p>
               <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                 <a
                   href="/events"
-                  className="rounded-xl bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-blue-500 active:scale-95 sm:px-5 sm:py-3"
+                  className="rounded-xl bg-white px-4 py-2 text-center text-sm font-semibold text-slate-900 shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-blue-500/40 sm:px-5 sm:py-3"
                 >
-                  Explore events
+                  View events
                 </a>
                 <a
-                  href="#programs"
-                  className="rounded-xl border border-gray-200 px-4 py-2 text-center text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700 active:scale-95 sm:px-5 sm:py-3"
+                  href="#signature"
+                  className="rounded-xl border border-white/30 px-4 py-2 text-center text-sm font-semibold text-white transition hover:border-blue-200 hover:text-blue-100 hover:-translate-y-0.5 sm:px-5 sm:py-3"
                 >
-                  Discover programs
+                  See our flagship work
                 </a>
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-              {["Workshops", "Hackathons", "Industry Talks", "Community Service"].map((item) => (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {["Workshops", "Hackathons", "Industry Talks", "Community Impact"].map((item) => (
                 <div
                   key={item}
-                  className="rounded-xl border border-gray-100 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:rounded-2xl sm:p-4"
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:shadow-blue-600/30"
                 >
-                  <div className="text-xs font-semibold text-blue-700 sm:text-sm">{item}</div>
-                  <p className="mt-1 text-xs text-gray-700 sm:mt-2 sm:text-sm">
-                    Practical sessions led by peers and guests to upskill and collaborate.
+                  <div className="text-sm font-semibold text-blue-100">{item}</div>
+                  <p className="mt-2 text-xs text-slate-200">
+                    Curated, hands-on sessions with peers, alumni, and industry partners.
                   </p>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Impact stats removed per request */}
         </section>
 
-        {/* Programs Section */}
-        <section id="programs" className="grid gap-4 sm:gap-6 md:grid-cols-3">
-          {[
-            {
-              title: "Learning Tracks",
-              body:
-                "Semester-long tracks on AI, embedded systems, web, and power engineering with weekly meetups.",
-            },
-            {
-              title: "Projects Lab",
-              body:
-                "Small teams build portfolio-ready projects, from prototypes to campus-ready solutions.",
-            },
-            {
-              title: "Career Readiness",
-              body:
-                "Resume reviews, mock interviews, and mentorship from alumni and industry partners.",
-            },
-          ].map((card) => (
-            <div
-              key={card.title}
-              className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:rounded-2xl sm:p-6"
-            >
-              <h2 className="text-base font-semibold text-gray-900 sm:text-lg lg:text-xl">{card.title}</h2>
-              <p className="mt-2 text-sm text-gray-700 sm:text-base">{card.body}</p>
+        {/* Signature moments */}
+        <section id="signature" className="grid gap-5 sm:gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-blue-900/30">
+            <h2 className="text-xl font-bold text-white sm:text-2xl">Signature events</h2>
+            <p className="mt-2 text-sm text-slate-200">
+              A few of the moments that shaped our branch—spanning comms, robotics, space, power, and security.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {[
+                { title: "CyberQuest 2.0", tag: "Cybersecurity", body: "Blue-team drills, threat hunting labs, and real incident debriefs." },
+                { title: "SolveThe17 Hackathon", tag: "Impact", body: "48 hours, SDG-driven prototypes with mentors from industry." },
+                { title: "ComSoc NileSat Tour", tag: "Space & Comms", body: "Deep dive into satellite operations with NileSat engineers." },
+                { title: "PES ElectroDrive Day", tag: "Energy", body: "EV powertrain teardown, grid impact, and rapid charging demos." },
+                { title: "Quantum Computing 2025", tag: "Research", body: "Qiskit labs on error mitigation and NISQ-era workflows." },
+                { title: "Career Kickstart", tag: "Careers", body: "Resume gyms, mock interviews, and alumni panels." },
+              ].map((card) => (
+                <div
+                  key={card.title}
+                  className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm shadow-black/10 transition hover:-translate-y-1 hover:border-blue-200/40"
+                >
+                  <div className="flex items-center justify-between text-xs text-blue-100">
+                    <span className="rounded-full bg-blue-500/20 px-2 py-0.5">{card.tag}</span>
+                    <span className="text-white/70">Flagship</span>
+                  </div>
+                  <h3 className="mt-2 text-base font-semibold text-white">{card.title}</h3>
+                  <p className="mt-1 text-sm text-slate-200">{card.body}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </section>
+          </div>
 
-        {/* About Section */}
-        <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 lg:p-8">
-          <h3 className="text-lg font-semibold text-gray-900 sm:text-xl lg:text-2xl">What is IEEE EUI?</h3>
-          <p className="mt-2 text-sm text-gray-700 sm:mt-3 sm:text-base lg:text-lg">
-            IEEE EUI is a student branch dedicated to advancing technology for the benefit of humanity.
-            We connect students with resources, mentorship, and opportunities to grow as engineers and leaders.
-            Expect hands-on learning, collaborative projects, and a welcoming community.
-          </p>
-          <ul className="mt-3 grid gap-2 sm:mt-4 sm:gap-3 sm:grid-cols-2">
-            <li className="flex items-start gap-2 text-sm text-gray-700 sm:text-base">
-              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-600" />
-              Regular technical workshops and study groups.
-            </li>
-            <li className="flex items-start gap-2 text-sm text-gray-700 sm:text-base">
-              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-600" />
-              Annual hackathons and design challenges.
-            </li>
-            <li className="flex items-start gap-2 text-sm text-gray-700 sm:text-base">
-              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-600" />
-              Networking with alumni and industry speakers.
-            </li>
-            <li className="flex items-start gap-2 text-sm text-gray-700 sm:text-base">
-              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-600" />
-              Community outreach and service initiatives.
-            </li>
-          </ul>
-        </section>
-
-        {/* Meet Our Team Section */}
-        <div className="border-t border-gray-200 pt-8 sm:pt-10 lg:pt-12">
-          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">Meet Our Team</h2>
-          <p className="mt-2 text-sm text-gray-600 sm:text-base">
-            Discover the dedicated leaders and members driving IEEE EUI's mission.
-          </p>
-        </div>
-
-        {/* Executive Committee Slider */}
-        <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 lg:p-8">
-          <PersonSlider
-            members={excomMembers}
-            title="Executive Committee"
-            currentSlide={excomSlide}
-            setSlide={setExcomSlide}
-            isExcom={true}
-          />
-        </section>
-
-        {/* Committee Heads Slider */}
-        <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 lg:p-8">
-          <PersonSlider
-            members={committeeHeads}
-            title="Committee Heads"
-            currentSlide={committeeSlide}
-            setSlide={setCommitteeSlide}
-            isExcom={false}
-          />
-        </section>
-
-        {/* Founders Slider */}
-        <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 lg:p-8">
-          <PersonSlider
-            members={founders}
-            title="IEEE EUI Founders"
-            currentSlide={foundersSlide}
-            setSlide={setFoundersSlide}
-            isExcom={false}
-          />
-        </section>
-
-        {/* Awards & Recognition Section */}
-        <div className="border-t border-gray-200 pt-8 sm:pt-10 lg:pt-12">
-          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">Awards & Recognition</h2>
-          <p className="mt-2 text-sm text-gray-600 sm:text-base">
-            Celebrating our achievements and contributions to the IEEE community.
-          </p>
-        </div>
-
-        {/* Awards Slider */}
-        <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 lg:p-8">
-          <div className="w-full">
-            <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-gray-200">
-              <div
-                className="h-full bg-amber-500 transition-all duration-1000 ease-linear"
-                style={{ width: `${((awardsSlide + 1) / awards.length) * 100}%` }}
-              />
+          <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-blue-900/30">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white">Fresh wins</h3>
+                <p className="text-sm text-slate-200">Snapshots from awards and community impact.</p>
+              </div>
             </div>
-            <div className="relative flex flex-col items-center gap-4 sm:gap-6">
-              <div className="relative h-48 w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-amber-100 to-yellow-50 shadow-lg sm:h-64 md:max-w-2xl lg:h-80">
+            <div className="relative flex flex-col gap-4">
+              <div className="mb-1 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                <div
+                  key={`awards-${awardsSlide}-${awardsProgressKey}`}
+                  className="h-full bg-amber-400"
+                  style={{ animation: "sliderProgress 5s linear forwards" }}
+                />
+              </div>
+              <div className="relative h-64 overflow-hidden rounded-2xl bg-gradient-to-br from-amber-200/20 to-amber-500/10 shadow-lg shadow-black/30 sm:h-80">
                 <Image
                   src={awards[awardsSlide]}
                   alt="Award"
                   fill
-                  className="object-contain p-2 sm:p-4"
-                  sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 3rem), min(100vw - 4rem, 42rem)"
+                  className="object-contain p-3 sm:p-6"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>
-              <div className="flex gap-2 sm:gap-3">
-                <button
-                  onClick={() => setAwardsSlide((awardsSlide - 1 + awards.length) % awards.length)}
-                  className="rounded-full bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200 active:scale-95 sm:p-3"
-                >
-                  ←
-                </button>
+              <div className="flex items-center justify-between text-sm text-slate-200">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setAwardsSlide((awardsSlide - 1 + awards.length) % awards.length);
+                      setAwardsProgressKey((key) => key + 1);
+                    }}
+                    className="rounded-full bg-white/10 px-3 py-2 text-white transition hover:bg-white/20"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAwardsSlide((awardsSlide + 1) % awards.length);
+                      setAwardsProgressKey((key) => key + 1);
+                    }}
+                    className="rounded-full bg-white/10 px-3 py-2 text-white transition hover:bg-white/20"
+                  >
+                    →
+                  </button>
+                </div>
                 <div className="flex gap-1">
                   {awards.map((_, i) => (
-                    <button
+                    <span
                       key={i}
-                      onClick={() => setAwardsSlide(i)}
-                      className={`h-2 rounded-full transition ${
-                        i === awardsSlide ? "w-6 bg-blue-600" : "w-2 bg-blue-200"
-                      }`}
+                      className={`h-2 w-2 rounded-full ${i === awardsSlide ? "bg-amber-400" : "bg-white/30"}`}
                     />
                   ))}
                 </div>
-                <button
-                  onClick={() => setAwardsSlide((awardsSlide + 1) % awards.length)}
-                  className="rounded-full bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200 active:scale-95 sm:p-3"
-                >
-                  →
-                </button>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Tracks & labs */}
+        <section id="programs" className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-blue-900/30">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-white sm:text-2xl">Tracks, labs, and field work</h2>
+              <p className="text-sm text-slate-200">From AI sprints to power systems—built with mentors and alumni.</p>
+            </div>
+            <a href="/events" className="text-sm font-semibold text-amber-300 underline-offset-4 hover:underline">
+              Browse full calendar
+            </a>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { title: "AI & ML", body: "Computer vision, LLM agents, and MLOps fast-tracks." },
+              { title: "Embedded & Robotics", body: "Rapid prototyping, ROS nodes, and autonomous stacks." },
+              { title: "Power & Energy", body: "Grid simulations, EV systems, and renewable integration." },
+              { title: "Security", body: "Reverse engineering, blue-team labs, and exploit walkthroughs." },
+              { title: "Web & Cloud", body: "Full-stack builds, design systems, and cloud fundamentals." },
+              { title: "Outreach", body: "STEM days, community service, and school tech tours." },
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm shadow-black/10 transition hover:-translate-y-1 hover:border-blue-200/30"
+              >
+                <h3 className="text-base font-semibold text-white">{card.title}</h3>
+                <p className="mt-1 text-sm text-slate-200">{card.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Meet Our Team Section */}
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-blue-900/30">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-white sm:text-2xl lg:text-3xl">The people behind the work</h2>
+              <p className="text-sm text-slate-200">Leadership, committee heads, and the founders who kicked it off.</p>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-5 lg:grid-cols-3">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm shadow-black/10">
+              <PersonSlider
+                members={excomMembers}
+                title="Executive Committee"
+                currentSlide={excomSlide}
+                setSlide={setExcomSlide}
+                progressKey={excomProgressKey}
+              />
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm shadow-black/10">
+              <PersonSlider
+                members={committeeHeads}
+                title="Committee Heads"
+                currentSlide={committeeSlide}
+                setSlide={setCommitteeSlide}
+                progressKey={committeeProgressKey}
+              />
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm shadow-black/10">
+              <PersonSlider
+                members={founders}
+                title="IEEE EUI Founders"
+                currentSlide={foundersSlide}
+                setSlide={setFoundersSlide}
+                progressKey={foundersProgressKey}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Field notes */}
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-blue-900/30">
+          <h2 className="text-xl font-bold text-white sm:text-2xl">Field notes</h2>
+          <p className="mt-2 text-sm text-slate-200">A quick snapshot of recent highlights.</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { title: "IEEE R8 SAC Chair Talk", meta: "Leadership", body: "Growing student branches and impact across Region 8." },
+              { title: "She Inspires • WIE", meta: "Inclusion", body: "Mentorship circles and career pathways for women in engineering." },
+              { title: "Reverse Engineering 101", meta: "Security", body: "Static + dynamic analysis, unpacking real binaries." },
+              { title: "Software Eng Committee Kickoff", meta: "SWE", body: "Building the branch's product backbone and tooling." },
+              { title: "Computational Physics Workshop", meta: "Research", body: "Simulations, numerical methods, and HPC intros." },
+              { title: "Hospital 57357 SIGHT Tour", meta: "Humanitarian", body: "Tech for care delivery and medical systems." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm shadow-black/10">
+                <div className="text-xs uppercase tracking-wide text-blue-100">{item.meta}</div>
+                <h3 className="mt-1 text-base font-semibold text-white">{item.title}</h3>
+                <p className="mt-1 text-sm text-slate-200">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Footer CTA */}
-        <section className="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 to-blue-100/50 p-4 text-center shadow-sm sm:rounded-2xl sm:p-6 lg:p-8">
-          <h3 className="text-lg font-bold text-gray-900 sm:text-xl lg:text-2xl">Ready to join IEEE EUI?</h3>
-          <p className="mt-2 text-sm text-gray-700 sm:text-base lg:text-lg">
-            Connect with us on social media, attend an event, or reach out to our team to get involved.
+        <section className="rounded-2xl border border-white/10 bg-gradient-to-r from-blue-600/40 via-blue-500/30 to-purple-500/30 p-5 text-center shadow-xl shadow-blue-900/40">
+          <h3 className="text-lg font-bold text-white sm:text-xl lg:text-2xl">Ready to build with us?</h3>
+          <p className="mt-2 text-sm text-slate-100 sm:text-base lg:text-lg">
+            Drop into our next workshop, jump on a track, or partner with us on your next idea.
           </p>
           <a
             href="/events"
-            className="mt-4 inline-block rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-blue-500 active:scale-95 sm:mt-6 sm:px-8 sm:py-3 sm:text-base"
+            className="mt-4 inline-block rounded-lg bg-white px-6 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 sm:mt-6 sm:px-8 sm:py-3 sm:text-base"
           >
-            Explore Upcoming Events
+            See upcoming sessions
           </a>
         </section>
       </div>
