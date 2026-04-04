@@ -8,13 +8,18 @@ export type EventItem = {
   belongsToASociety: boolean;
   society: string; // empty string when global
   postedDate: Date; // when the event was announced
+  isEnded: boolean;
 };
 
-export const events: EventItem[] = [
+type BaseEventItem = Omit<EventItem, "isEnded">;
+
+const baseEvents: BaseEventItem[] = [
   {
     id: "ieee-r8-north-africa-congress-2023",
-    title: "IEEE R8 North Africa Student and Young Professional (NASYP) Congress 2023",
-    description: "A congress for students and young professionals to network and learn.",
+    title:
+      "IEEE R8 North Africa Student and Young Professional (NASYP) Congress 2023",
+    description:
+      "A congress for students and young professionals to network and learn.",
     startDate: new Date("2023-08-24T00:00:00"),
     endDate: new Date("2023-09-08T00:00:00"),
     endpoint: "/events/ieee-r8-north-africa-congress-2023",
@@ -36,7 +41,8 @@ export const events: EventItem[] = [
   {
     id: "kottamia-astronomical-observatory-trip",
     title: "Kottamia Astronomical Observatory Trip",
-    description: "A trip to the Kottamia Astronomical Observatory to explore the universe.",
+    description:
+      "A trip to the Kottamia Astronomical Observatory to explore the universe.",
     startDate: new Date("2023-05-25T00:00:00"),
     endDate: new Date("2023-05-27T00:00:00"),
     endpoint: "/events/kottamia-astronomical-observatory-trip",
@@ -47,7 +53,8 @@ export const events: EventItem[] = [
   {
     id: "3-min-talk-competition",
     title: "3-MIN Talk Competition",
-    description: "A competition where participants present their ideas in 3 minutes.",
+    description:
+      "A competition where participants present their ideas in 3 minutes.",
     startDate: new Date("2023-05-16T00:00:00"),
     endDate: new Date("2023-05-20T00:00:00"),
     endpoint: "/events/3-min-talk-competition",
@@ -134,11 +141,13 @@ export const events: EventItem[] = [
   },
   {
     id: "ieee-eui-computer-society-cybersecurity-committee-kickoff-session",
-    title: "IEEE EUI Computer Society – Cybersecurity Committee Kickoff Session",
+    title:
+      "IEEE EUI Computer Society – Cybersecurity Committee Kickoff Session",
     description: "Kickoff session for the Cybersecurity Committee.",
     startDate: new Date("2025-11-30T00:00:00"),
     endDate: new Date("2025-12-08T00:00:00"),
-    endpoint: "/events/ieee-eui-computer-society-cybersecurity-committee-kickoff-session",
+    endpoint:
+      "/events/ieee-eui-computer-society-cybersecurity-committee-kickoff-session",
     belongsToASociety: true,
     society: "SBC60211912",
     postedDate: new Date("2025-11-01T00:00:00"),
@@ -157,7 +166,8 @@ export const events: EventItem[] = [
   {
     id: "ai-committee-foundations-session-1",
     title: "AI Committee - Foundations session 1",
-    description: "Foundational session covering AI committee basics and roadmap.",
+    description:
+      "Foundational session covering AI committee basics and roadmap.",
     startDate: new Date("2023-11-04T00:00:00"),
     endDate: new Date("2023-11-11T00:00:00"),
     endpoint: "/events/ai-committee-foundations-session-1",
@@ -168,7 +178,8 @@ export const events: EventItem[] = [
   {
     id: "eui-top-achievers-awards",
     title: "EUI Top Achievers Awards",
-    description: "Celebrating top achievers at EUI with awards and recognition.",
+    description:
+      "Celebrating top achievers at EUI with awards and recognition.",
     startDate: new Date("2023-10-31T00:00:00"),
     endDate: new Date("2023-11-03T00:00:00"),
     endpoint: "/events/eui-top-achievers-awards",
@@ -190,7 +201,8 @@ export const events: EventItem[] = [
   {
     id: "egyptian-space-agency-trip",
     title: "Egyptian Space Agency Trip",
-    description: "IEEE EUI SB organized trip to the Egyptian Space Agency with EUI students.",
+    description:
+      "IEEE EUI SB organized trip to the Egyptian Space Agency with EUI students.",
     startDate: new Date("2023-11-27T00:00:00"),
     endDate: new Date("2023-12-21T00:00:00"),
     endpoint: "/events/egyptian-space-agency-trip",
@@ -201,7 +213,8 @@ export const events: EventItem[] = [
   {
     id: "trip-to-valeo-by-ieee-eui-sb",
     title: "Trip to Valeo by IEEE EUI SB",
-    description: "Industrial field trip to Valeo for exposure to real-world engineering practices.",
+    description:
+      "Industrial field trip to Valeo for exposure to real-world engineering practices.",
     startDate: new Date("2024-02-20T00:00:00"),
     endDate: new Date("2024-02-29T00:00:00"),
     endpoint: "/events/trip-to-valeo-by-ieee-eui-sb",
@@ -212,7 +225,8 @@ export const events: EventItem[] = [
   {
     id: "cyberquest-2-0",
     title: "CyberQuest 2.0",
-    description: "Cybersecurity-themed challenge and activities spanning 2024–2025.",
+    description:
+      "Cybersecurity-themed challenge and activities spanning 2024–2025.",
     startDate: new Date("2024-11-30T00:00:00"),
     endDate: new Date("2025-03-22T00:00:00"),
     endpoint: "/events/cyberquest-2-0",
@@ -222,11 +236,14 @@ export const events: EventItem[] = [
   },
   {
     id: "ieee-pes-day-electrodrive-pioneering-the-future-of-electric-mobility",
-    title: "IEEE PES DAY | ElectroDrive: Pioneering the Future of Electric Mobility",
-    description: "PES Day collaboration event focused on electric mobility advancements.",
+    title:
+      "IEEE PES DAY | ElectroDrive: Pioneering the Future of Electric Mobility",
+    description:
+      "PES Day collaboration event focused on electric mobility advancements.",
     startDate: new Date("2024-04-23T00:00:00"),
     endDate: new Date("2024-05-13T00:00:00"),
-    endpoint: "/events/ieee-pes-day-electrodrive-pioneering-the-future-of-electric-mobility",
+    endpoint:
+      "/events/ieee-pes-day-electrodrive-pioneering-the-future-of-electric-mobility",
     belongsToASociety: true,
     society: "STB60211912, STB60218206, STB11529",
     postedDate: new Date("2024-04-10T00:00:00"),
@@ -256,7 +273,8 @@ export const events: EventItem[] = [
   {
     id: "solve-the-17-hackathon",
     title: "SolveThe17 Hackathon",
-    description: "A dynamic hackathon in collaboration with Ministry of Youth & Sports to turn ideas into real-world solutions.",
+    description:
+      "A dynamic hackathon in collaboration with Ministry of Youth & Sports to turn ideas into real-world solutions.",
     startDate: new Date("2025-05-10T10:00:00"),
     endDate: new Date("2025-05-17T18:00:00"),
     endpoint: "/events/solve-the-17-hackathon",
@@ -266,11 +284,14 @@ export const events: EventItem[] = [
   },
   {
     id: "ieee-eui-computer-society-software-engineering-committee-kickoff-session",
-    title: "IEEE EUI Computer Society Software Engineering Committee Kickoff Session",
-    description: "Kickoff session for the Software Engineering Committee launching new initiatives and roadmap.",
+    title:
+      "IEEE EUI Computer Society Software Engineering Committee Kickoff Session",
+    description:
+      "Kickoff session for the Software Engineering Committee launching new initiatives and roadmap.",
     startDate: new Date("2025-11-27T00:00:00"),
     endDate: new Date("2025-11-27T00:00:00"),
-    endpoint: "/events/ieee-eui-computer-society-software-engineering-committee-kickoff-session",
+    endpoint:
+      "/events/ieee-eui-computer-society-software-engineering-committee-kickoff-session",
     belongsToASociety: true,
     society: "SBC60211912, STB60211912",
     postedDate: new Date("2025-11-15T00:00:00"),
@@ -278,7 +299,8 @@ export const events: EventItem[] = [
   {
     id: "ieee-eui-sb-x-wedev-computational-physics-workshop",
     title: "IEEE EUI SB X Wedev - Computational Physics Workshop Collab",
-    description: "Collaborative computational physics workshop combining practical coding and physics simulations.",
+    description:
+      "Collaborative computational physics workshop combining practical coding and physics simulations.",
     startDate: new Date("2025-11-21T00:00:00"),
     endDate: new Date("2025-11-24T00:00:00"),
     endpoint: "/events/ieee-eui-sb-x-wedev-computational-physics-workshop",
@@ -289,7 +311,8 @@ export const events: EventItem[] = [
   {
     id: "sight-technical-tour-hospital-57357-humanitarian-tech",
     title: "A SIGHT Technical Tour of Hospital 57357's Humanitarian Tech",
-    description: "Technical tour exploring humanitarian technology innovations at Hospital 57357.",
+    description:
+      "Technical tour exploring humanitarian technology innovations at Hospital 57357.",
     startDate: new Date("2025-12-15T00:00:00"),
     endDate: new Date("2025-12-15T00:00:00"),
     endpoint: "/events/sight-technical-tour-hospital-57357-humanitarian-tech",
@@ -298,3 +321,8 @@ export const events: EventItem[] = [
     postedDate: new Date("2025-12-01T00:00:00"),
   },
 ];
+
+export const events: EventItem[] = baseEvents.map((event) => ({
+  ...event,
+  isEnded: event.endDate.getTime() < Date.now(),
+}));
