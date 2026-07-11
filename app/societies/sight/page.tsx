@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function SightPage() {
   return (
     <main className="min-h-screen bg-linear-to-b from-amber-50 via-white to-white px-6 py-12 text-gray-900">
@@ -14,12 +15,12 @@ export default function SightPage() {
             communities. Human-centered design meets pragmatic engineering.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="/events?society=SIGHT"
+            <Link
+              href="/events?society=sight"
               className="rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-amber-200 transition hover:bg-amber-500"
             >
               View SIGHT events
-            </a>
+            </Link>
             <a
               href="mailto:ieee@example.edu"
               className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-amber-300 hover:text-amber-700"

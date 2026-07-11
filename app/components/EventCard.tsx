@@ -1,17 +1,30 @@
 import Link from "next/link";
-import { EventItem } from "../events-data";
+
+// Lightweight card projection of an event; keeps the heavy per-event page
+// content out of the events-list client bundle.
+export type EventCardData = {
+  id: string;
+  title: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  isEnded: boolean;
+  societyLabel: string;
+  societyCodes: string[];
+};
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+});
 
 function formatDateRange(startDate: Date, endDate: Date): string {
   const sameDay = startDate.toDateString() === endDate.toDateString();
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-  const timeFormatter = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
 
   if (sameDay) {
     return `${dateFormatter.format(startDate)} · ${timeFormatter.format(startDate)} - ${timeFormatter.format(endDate)}`;
@@ -21,7 +34,7 @@ function formatDateRange(startDate: Date, endDate: Date): string {
 }
 
 type EventCardProps = {
-  event: EventItem;
+  event: EventCardData;
 };
 
 export function EventCard({ event }: EventCardProps) {
@@ -29,7 +42,7 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <Link
-      href={event.endpoint}
+      href={`/events/${event.id}`}
       className="group relative block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
       {isEnded && (
@@ -47,7 +60,7 @@ export function EventCard({ event }: EventCardProps) {
             {event.title}
           </h2>
           <div className="text-xs font-semibold text-emerald-700">
-            {event.belongsToASociety ? event.society : "Global event"}
+            {event.societyLabel}
           </div>
         </div>
         <span className="text-sm font-semibold text-blue-600">
@@ -55,9 +68,6 @@ export function EventCard({ event }: EventCardProps) {
         </span>
       </div>
       <p className="mt-2 text-gray-700">{event.description}</p>
-      <div className="mt-3 text-xs text-gray-500">
-        Endpoint: {event.endpoint}
-      </div>
       {isEnded && (
         <div className="pointer-events-none absolute right-4 top-4 rounded-full bg-gray-800/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow-sm">
           Ended

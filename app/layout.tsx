@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
-import { EventsProvider } from "./context/EventsContext";
+import Footer from "./components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IEEE EUI - Home",
-  description: "Welcome to IEEE student branch at EUI!",
+  title: {
+    default: "IEEE EUI Student Branch",
+    template: "%s | IEEE EUI",
+  },
+  description:
+    "IEEE Student Branch at Egypt University of Informatics — workshops, hackathons, industry talks, and community impact.",
 };
 
 export default function RootLayout({
@@ -29,10 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <EventsProvider>
-          <Header />
-          {children}
-        </EventsProvider>
+        <Header />
+        {children}
+        <Footer />
       </body>
     </html>
   );

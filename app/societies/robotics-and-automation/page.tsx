@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function RoboticsAutomationPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-white px-6 py-12 text-gray-900">
@@ -14,12 +15,12 @@ export default function RoboticsAutomationPage() {
             iron and your GitHub.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="/events?society=Robotics%20and%20Automation"
+            <Link
+              href="/events?society=robotics-and-automation"
               className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-emerald-200 transition hover:bg-emerald-500"
             >
               View RAS events
-            </a>
+            </Link>
             <a
               href="mailto:ieee@example.edu"
               className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-emerald-300 hover:text-emerald-700"

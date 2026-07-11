@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function ComSocPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-white px-6 py-12 text-gray-900">
@@ -14,12 +15,12 @@ export default function ComSocPage() {
             spectrum discussions, and hands-on demos.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="/events?society=ComSoc"
+            <Link
+              href="/events?society=comsoc"
               className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition hover:bg-indigo-500"
             >
               View ComSoc events
-            </a>
+            </Link>
             <a
               href="mailto:ieee@example.edu"
               className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-indigo-300 hover:text-indigo-700"

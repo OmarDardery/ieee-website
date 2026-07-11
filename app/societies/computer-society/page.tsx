@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function ComputerSocietyPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white px-6 py-12 text-gray-900">
@@ -14,12 +15,12 @@ export default function ComputerSocietyPage() {
             collaborations that ship real products.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="/events?society=Computer%20Society"
+            <Link
+              href="/events?society=computer-society"
               className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-blue-500"
             >
               View Computer Society events
-            </a>
+            </Link>
             <a
               href="mailto:ieee@example.edu"
               className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
