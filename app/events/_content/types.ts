@@ -44,4 +44,10 @@ export type EventDefinition = {
    * Each event can have completely custom sections and styling here.
    */
   content: ReactNode;
+  /**
+   * Escape hatch for flagship events: when set, this JSX replaces the whole
+   * generic event layout (badge, banner, header, container), giving the event
+   * a fully custom, full-bleed page. `content` is ignored in that case.
+   */
+  fullPage?: ReactNode;
 };

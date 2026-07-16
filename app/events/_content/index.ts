@@ -9,6 +9,7 @@ import { unitCodeToName } from "../../societies-data";
 import type { EventDefinition } from "./types";
 
 import { event as threeMinTalkCompetition } from "./3-min-talk-competition";
+import { event as bridgexSummit } from "./bridgex-summit";
 import { event as aiCommitteeFoundationsSession1 } from "./ai-committee-foundations-session-1";
 import { event as careerKickstart } from "./career-kickstart-find-yourself-before-finding-a-job";
 import { event as cyberquest20 } from "./cyberquest-2-0";
@@ -36,6 +37,7 @@ import { event as tripToValeo } from "./trip-to-valeo-by-ieee-eui-sb";
 import { event as userCentricDesignTalk } from "./user-centric-design-talk-dr-amr-al-awamry";
 
 const allEvents: EventDefinition[] = [
+  bridgexSummit,
   threeMinTalkCompetition,
   aiCommitteeFoundationsSession1,
   careerKickstart,

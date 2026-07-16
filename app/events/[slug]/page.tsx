@@ -37,6 +37,8 @@ export default async function EventPage({ params }: EventPageProps) {
 
   const ended = isEventEnded(event);
 
+  if (event.fullPage) return <>{event.fullPage}</>;
+
   return (
     <div className={`min-h-screen ${event.theme.page}`}>
       <div className="container mx-auto max-w-5xl px-4 py-12">

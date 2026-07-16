@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -i 's|href=\"/events?society=Computer%20Society\"|href=\"/events?society=computer-society\"|' app/societies/computer-society/page.tsx)",
+      "Bash(sed -i 's|href=\"/events?society=Robotics%20and%20Automation\"|href=\"/events?society=robotics-and-automation\"|' app/societies/robotics-and-automation/page.tsx)",
+      "Bash(sed -i 's|href=\"/events?society=SIGHT\"|href=\"/events?society=sight\"|' app/societies/sight/page.tsx)",
+      "Bash(sed -i 's|href=\"/events?society=ComSoc\"|href=\"/events?society=comsoc\"|' app/societies/comsoc/page.tsx)",
+      "Bash(bunx eslint *)",
+      "Bash(bun run *)"
+    ]
+  }
+}
